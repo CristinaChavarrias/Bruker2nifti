@@ -2,11 +2,11 @@ function [path_out fname]=create_nifti_vol(Img,path,pars)
 
 % FUNCTION create_nifti_vol.m
 % Converts Vol to Nifti format with the help of all the image parameters
-% (or=orientation, r_out=readout, idist=scanner isodist, m_or=orientation
+% (ori=orientation, r_out=readout, idist=scanner isodist, m_or=orientation
 % matrix, dims= dimensions, FOV=field of view, resol=resolution,
 % offset=scanner offset, tp= data type)
 
-    or      =   pars.orient;
+    ori     =   pars.orient;
     orient  =   pars.m_or;
     dims    =   pars.dims;
     resol   =   pars.resol;   %in mm
@@ -31,10 +31,12 @@ function [path_out fname]=create_nifti_vol(Img,path,pars)
     %MATRIX________________________________________________________________
     mat             =  [orient*diag(resol) pos0 ; 0 0 0 1];
 
-    if strcmp(or,'axial') 
+    if strcmp(ori,'axial') 
         mat             =   spm_matrix([0 0 0 0 pi pi 1 1 1])*mat;
-    elseif strcmp(or,'sagittal') 
+    elseif strcmp(ori,'sagittal') 
         mat             =   spm_matrix([0 0 0 0 0 pi 1 1 1])*mat;
+    else
+        error('Only axial and sagittal for PVM_SPackArrSliceOrient considered.')
     end
 
     
