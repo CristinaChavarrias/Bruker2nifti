@@ -2,7 +2,10 @@ function [dest fname]=Bruker2nifti(path)
 
 % FUNCTION Bruker2nifti.m
 % Extracts scanner parameters and builds the Nifti volume
-
+if isempty(which('spm')), error('SPM required'); end;
+if ~exist('path','var')
+    path = spm_select(inf,'2dseq','Select DKI images to merge');
+end
 
 pars            =   get_pars(path);
 total_dims      =   pars.dims;

@@ -41,7 +41,8 @@ function pars = get_pars(path)
         tag     =   strread(line,'%s','delimiter','=');
         switch tag{1}
             case '##$PVM_SPackArrNSlices'
-                pars.dims(3)     =   eval(fgetl(fid2));
+                pars.dims(1:3) = str2num(fgetl(fid2));
+                %pars.dims(3)     =   eval(fgetl(fid2));
             case '##$PVM_NRepetitions' 
                 pars.dims(4)     =   eval(tag{2}); 
             case '##$PVM_ScanTime'
@@ -78,7 +79,11 @@ function pars = get_pars(path)
                 pars.acq_dim     =   str2num(tag{2});
             case '##$ACQ_slice_sepn'
                 if pars.acq_dim==2
-                    pars.idist       =   eval(fgetl(fid));
+                    %pars.idist       =   eval(fgetl(fid));
+                    pars.idist = str2num(fgetl(fid));
+                    if numel(pars.idist) > 1 
+                        error('Unable to read images with multiple slice distances [localizer?]');
+                    end
                 end
             case '##$ACQ_slice_thick' 
                 if pars.acq_dim==2              
@@ -231,7 +236,9 @@ function pars = get_pars(path)
                 half_vx     =   pars.resol(pars.vect)/2;                  
                 pars.offset =   [pars.offset(1);pars.offset(2);-pars.offset(3)]; 
                 m_or2       =   [pars.m_or(:,1) pars.m_or(:,2) pars.m_or(:,3)];                
-            end        
+            end
+        otherwise
+            error('Invalid par.orient %s (localizer?)',pars.orient);
     end
     shift       =   -pars.FOV/2-half_vx-pars.offset;
     pars.pos0   =   m_or2*shift;
